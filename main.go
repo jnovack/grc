@@ -126,14 +126,13 @@ func main() {
         for _, n := range defs.Definition {
             for _, f := range n.Filter {
                 r := regexp.MustCompile(f.Match)
-                if f.Replace != "" {
-                    line = r.ReplaceAllString(line, f.Replace)
-                    r = regexp.MustCompile(f.Replace)
-                }
                 if f.Color != "" {
                     line = r.ReplaceAllStringFunc(line, func(match string) string {
                         return ansi.Color(match, f.Color)
                     })
+                }
+                if f.Replace != "" {
+                    line = r.ReplaceAllString(line, f.Replace)
                 }
             }
         }
