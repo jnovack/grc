@@ -1,0 +1,18 @@
+definition:
+  - name: ping
+    filter:
+      - match: "Read\\w*"
+        color: "green"
+      - match: "viper"
+        color: "yellow"
+      - match: "func"
+        replace: "function"
+        color: "cyan"
+      - match: "//.+"
+        color: "black+h"
+  - name: diff
+    filter:
+      - match: "Name"
+        color: "red"
+      - match: "Color"
+        color: "red+h"
