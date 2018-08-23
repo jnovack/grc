@@ -13,20 +13,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config Struct
-type Replacement struct {
+// Structs
+
+type replacement struct {
 	Match   string
 	Replace string
 	Color   string
 }
 
-type Definition struct {
+type definition struct {
 	Name   string
-	Filter []Replacement
+	Filter []replacement
 }
 
-type Config struct {
-	Definition []Definition
+type configuration struct {
+	Definition []definition
 }
 
 // Array Flags
@@ -87,7 +88,7 @@ func stringInSlice(a string, list []string) bool {
 func main() {
 	// "This line contains - Read - in the center"
 
-	var config, defs Config
+	var config, defs configuration
 	err := viper.Unmarshal(&config)
 	if err != nil {
 		panic("Unable to unmarshal config")
