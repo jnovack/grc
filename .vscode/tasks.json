@@ -6,7 +6,11 @@
         {
             "label": "cat",
             "type": "shell",
-            "command": "cat main.go | go run main.go"
+            "command": "cat main.go | go run main.go",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }

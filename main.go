@@ -127,20 +127,30 @@ func main() {
 
 	// iterate through defs
 	ReadLine(os.Stdin, func(line string) {
+		newline := line
 		for _, n := range defs.Definition {
 			for _, f := range n.Filter {
 				r := regexp.MustCompile(f.Match)
-				if f.Color != "" {
-					line = r.ReplaceAllStringFunc(line, func(match string) string {
-						return ansi.Color(match, f.Color)
-					})
-				}
-				if f.Replace != "" {
-					line = r.ReplaceAllString(line, f.Replace)
-				}
+				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
+					fmt.Println(match)
+					if f.Color != "" {
+						colorRegExp := fmt.Sprintf("%s%s", "(\\\x1b\\[\\d?;?\\d\\dm)[^\\\x1b]*?", f.Match)
+						fmt.Println("----", colorRegExp, "----\n")
+						c := regexp.MustCompile(colorRegExp)
+						substrings := c.FindAllStringSubmatch(newline, -1)
+						for _, s := range substrings {
+							fmt.Println("substring: ", s[1], "\n")
+						}
+						match = r.ReplaceAllString(match, ansi.Color(match, f.Color))
+					}
+					if f.Replace != "" {
+						match = r.ReplaceAllString(match, f.Replace)
+					}
+					return match
+				})
 			}
 		}
-		fmt.Println(line)
+		fmt.Println(newline)
 	})
 }
 
