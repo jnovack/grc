@@ -86,8 +86,6 @@ func stringInSlice(a string, list []string) bool {
 
 // Main
 func main() {
-	// "This line contains - Read - in the center"
-
 	var config, defs configuration
 	err := viper.Unmarshal(&config)
 	if err != nil {
@@ -132,16 +130,10 @@ func main() {
 			for _, f := range n.Filter {
 				r := regexp.MustCompile(f.Match)
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
-					fmt.Println(match)
+					//fmt.Println(match)
 					if f.Color != "" {
-						colorRegExp := fmt.Sprintf("%s%s", "(\\\x1b\\[\\d?;?\\d\\dm)[^\\\x1b]*?", f.Match)
-						fmt.Println("----", colorRegExp, "----\n")
-						c := regexp.MustCompile(colorRegExp)
-						substrings := c.FindAllStringSubmatch(newline, -1)
-						for _, s := range substrings {
-							fmt.Println("substring: ", s[1], "\n")
-						}
-						match = r.ReplaceAllString(match, ansi.Color(match, f.Color))
+
+						match = r.ReplaceAllString(match, ansi.Color(match))
 					}
 					if f.Replace != "" {
 						match = r.ReplaceAllString(match, f.Replace)
@@ -150,6 +142,28 @@ func main() {
 				})
 			}
 		}
+
+		// Clean up nested colors
+		colorRegExp := "\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b\\[]+)\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b\\[]+)\\x1b\\[(0m)([^\\x1b\\[]+)\\x1b\\[(0m)"
+		colorReplace := "\x1b[$1$2\x1c]$3$4\x1c]$1$6\x1b[$7"
+		// fmt.Println("----", colorRegExp, "----\n")
+		c := regexp.MustCompile(colorRegExp)
+		substrings := c.FindAllStringSubmatch(newline, -1)
+		for len(substrings) > 0 {
+			// fmt.Printf("----   %q\n", newline)
+			newline = c.ReplaceAllString(newline, colorReplace)
+			for _, s := range substrings {
+				fmt.Printf("substring: %q\n", s)
+			}
+			// fmt.Printf("++++   %q\n", newline)
+			substrings := c.FindAllStringSubmatch(newline, -1)
+			if len(substrings) == 0 {
+				break
+			}
+		}
+		// fmt.Printf("****   %q\n", newline)
+		removeDupes := regexp.MustCompile("\\x1c\\]")
+		newline = removeDupes.ReplaceAllString(newline, "\x1b[")
 		fmt.Println(newline)
 	})
 }
@@ -169,3 +183,5 @@ func init() {
 	flag.Var(&confFiles, "conf", "Some description for this param.")
 	flag.Parse()
 }
+
+// TEST outer inner outer TEST

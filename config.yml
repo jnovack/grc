@@ -1,8 +1,6 @@
 definition:
   - name: ping
     filter:
-      - match: "Read\\w*"
-        color: "green"
       - match: "viper"
         color: "yellow"
       - match: "C(\\w+)g"
@@ -11,11 +9,13 @@ definition:
       - match: "func"
         replace: "function"
         color: "cyan"
-      - match: "//.+"
-        color: "black+h"
   - name: diff
     filter:
-      - match: "Name"
-        color: "red"
-      - match: "Color"
+      - match: "// TEST.+"
+        color: "black+h"
+      - match: "outer.*outer"
+        color: "green+h"
+      - match: "inner"
         color: "red+h"
+      - match: "n(n)e"
+        color: ",white+h"
