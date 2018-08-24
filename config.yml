@@ -18,4 +18,4 @@ definition:
       - match: "inner"
         color: "red+h"
       - match: "n(n)e"
-        color: ",white+h"
+        color: "white+h"

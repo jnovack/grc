@@ -132,7 +132,8 @@ func main() {
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
 					//fmt.Println(match)
 					if f.Color != "" {
-						match = r.ReplaceAllString(match, ansi.Color(match, f.Color))
+						// multi := strings.Split(f.Color, ",")
+						match = r.ReplaceAllString(match, ansi.Color(match))
 					}
 					if f.Replace != "" {
 						match = r.ReplaceAllString(match, f.Replace)
@@ -149,18 +150,18 @@ func main() {
 		c := regexp.MustCompile(colorRegExp)
 		substrings := c.FindAllStringSubmatch(newline, -1)
 		for len(substrings) > 0 {
-			fmt.Printf("----   %q\n", newline)
+			// fmt.Printf("----   %q\n", newline)
 			newline = c.ReplaceAllString(newline, colorReplace)
 			for _, s := range substrings {
 				fmt.Printf("substring: %q\n", s)
 			}
-			fmt.Printf("++++   %q\n", newline)
+			// fmt.Printf("++++   %q\n", newline)
 			substrings := c.FindAllStringSubmatch(newline, -1)
 			if len(substrings) == 0 {
 				break
 			}
 		}
-		fmt.Printf("****   %q\n", newline)
+		// fmt.Printf("****   %q\n", newline)
 		removeDupes := regexp.MustCompile("\\x1c\\]")
 		newline = removeDupes.ReplaceAllString(newline, "\x1b[")
 		fmt.Println(newline)
