@@ -132,12 +132,7 @@ func main() {
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
 					//fmt.Println(match)
 					if f.Color != "" {
-<<<<<<< HEAD
-						// multi := strings.Split(f.Color, ",")
-						match = r.ReplaceAllString(match, ansi.Color(match))
-=======
 						match = r.ReplaceAllString(match, ansi.Color(match, f.Color))
->>>>>>> master
 					}
 					if f.Replace != "" {
 						match = r.ReplaceAllString(match, f.Replace)
