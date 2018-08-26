@@ -133,7 +133,11 @@ func main() {
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
 					if !f.Disable {
 						if f.Color != "" {
-							match = colorString(match, f.Match, f.Color)
+							if matched, _ := regexp.MatchString("[^\\\\]\\(", f.Match); matched == true {
+								match = colorSubstring(match, f.Match, f.Color)
+							} else {
+								match = colorString(match, f.Match, f.Color)
+							}
 						}
 						if f.Replace != "" {
 							match = r.ReplaceAllString(match, f.Replace)
@@ -170,35 +174,25 @@ func main() {
 }
 
 func colorSubstring(line string, find string, color string) string {
+	// fmt.Printf("\rcolorSubstring(line: %s, find: %s, color: %s\n", line, find, color)
 	// TODO find multiple paren strings
-	// matched, _ := regexp.MatchString("[^\\](.*[^\\])", find)
-	// fmt.Println(matched)
-	// for matched {
-		replace := "(.*?)\\((.+)\\)(.*)"
-		r := regexp.MustCompile(replace)
-		substrings := r.FindAllStringSubmatch(find, -1)
-		fmt.Printf("%q\n", substrings)
-		var b strings.Builder
-		// Match will always be [2] but will contained escaped slashes, remove them, color the rest
-		substrings[0][2] = ansi.Color(strings.Replace(substrings[0][2], "\\", "", -1), color)
-		for i := 1; i <= 3; i++ {
-			fmt.Fprintf(&b, "%s", substrings[0][i])
-		}
-		line = b.String()
-		// matched, _ = regexp.MatchString("[^\\](.*[^\\])", line)
-		// fmt.Println(matched)
+	r := regexp.MustCompile("(.*?)(" + find + ")(.*)")
+	replace := r.FindAllStringSubmatch(line, -1)
+	// fmt.Printf("TEST: %q\n", replace)
+	// for _, s := range replace[0] {
+	// 	fmt.Printf("replace-substring: %q\n", s)
 	// }
+	line = strings.Replace(replace[0][2], replace[0][3], ansi.Color(replace[0][3], color), -1)
+	// fmt.Printf("\rcolorSubstring: return %s\n", line)
 	return line
 }
 
 func colorString(line string, find string, color string) string {
 	r := regexp.MustCompile(find)
 	line = r.ReplaceAllStringFunc(line, func(match string) string {
-		// fmt.Printf("colorString():  %s  |  %s  |  %s\n", match, find, color)
-		if matched, _ := regexp.MatchString("[^\\\\]\\(", find); matched == true {
-			match = colorSubstring(match, find, color)
-		}
-		return r.ReplaceAllString(match, ansi.Color(match, color))
+		// fmt.Printf("\rcolorString():  %s  |  %s  |  %s\n", match, find, color)
+		match = r.ReplaceAllString(match, ansi.Color(match, color))
+		return match
 	})
 	return line
 }
