@@ -212,5 +212,14 @@ func init() {
 	flag.Var(&confFiles, "conf", "Some description for this param.")
 	flag.Parse()
 }
-// TEST outer inner outer TEST
-// TEST outer in(n)er outer TEST
+// TEST outer zinnerz outer TEST
+// TEST outer zin(n)erz outer TEST
+// PING 8.8.8.8 (8.8.8.8): 56 data bytes
+// 64 bytes from 8.8.8.8: icmp_seq=0 ttl=122 time=8.105 ms
+// 64 bytes from 8.8.8.8: icmp_seq=1 ttl=122 time=19.494 ms
+// 64 bytes from 8.8.8.8: icmp_seq=2 ttl=122 time=219.500 ms
+// Request timeout for icmp_seq 3
+// 
+// --- 8.8.8.8 ping statistics ---
+// 4 packets transmitted, 3 packets received, 25.0% packet loss
+// round-trip min/avg/max/stddev = 8.105/19.494/219.500/20.274 ms
