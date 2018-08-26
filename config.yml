@@ -9,13 +9,16 @@ definition:
       - match: "func"
         replace: "function"
         color: "cyan"
-  - name: diff
+  - name: test
     filter:
       - match: "// TEST.+"
         color: "black+h"
       - match: "outer.*outer"
-        color: "green+h"
-      - match: "inner"
+        color: "green"
+      - match: "i[n\\(\\)]+er"
+        color: "yellow"
+      - match: "i(nn)er"
+        color: "magenta"
+        disable: false
+      - match: "in(\\(n\\))er"
         color: "red+h"
-      - match: "i(n)(n)er"
-        color: "white+h"

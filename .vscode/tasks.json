@@ -6,7 +6,7 @@
         {
             "label": "cat",
             "type": "shell",
-            "command": "tail -1 main.go | go run main.go --conf diff",
+            "command": "tail -2 main.go | go run main.go --conf test",
             "group": {
                 "kind": "build",
                 "isDefault": true

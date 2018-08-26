@@ -19,6 +19,7 @@ type replacement struct {
 	Match   string
 	Replace string
 	Color   string
+	Disable bool
 }
 
 type definition struct {
@@ -130,18 +131,13 @@ func main() {
 			for _, f := range n.Filter {
 				r := regexp.MustCompile(f.Match)
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
-					//fmt.Println(match)
-					if f.Color != "" {
-						// if mode == "substring" && match contains parens
-						//    FindAllStringSubmatch
-						//    loop
-						//        replace \x with color[x]
-						match = colorString(match, f.Match, f.Color)
-
-						// match = r.ReplaceAllString(match, ansi.Color(match, f.Color))
-					}
-					if f.Replace != "" {
-						match = r.ReplaceAllString(match, f.Replace)
+					if !f.Disable {
+						if f.Color != "" {
+							match = colorString(match, f.Match, f.Color)
+						}
+						if f.Replace != "" {
+							match = r.ReplaceAllString(match, f.Replace)
+						}
 					}
 					return match
 				})
@@ -174,15 +170,17 @@ func main() {
 }
 
 func colorSubstring(line string, find string, color string) string {
+	// TODO find multiple paren strings
 	// matched, _ := regexp.MatchString("[^\\](.*[^\\])", find)
 	// fmt.Println(matched)
 	// for matched {
-		replace := "(.*?)\\(([^(]+?)\\)(.*)"
+		replace := "(.*?)\\((.+)\\)(.*)"
 		r := regexp.MustCompile(replace)
 		substrings := r.FindAllStringSubmatch(find, -1)
 		fmt.Printf("%q\n", substrings)
 		var b strings.Builder
-		substrings[0][2] = ansi.Color(substrings[0][2], color)
+		// Match will always be [2] but will contained escaped slashes, remove them, color the rest
+		substrings[0][2] = ansi.Color(strings.Replace(substrings[0][2], "\\", "", -1), color)
 		for i := 1; i <= 3; i++ {
 			fmt.Fprintf(&b, "%s", substrings[0][i])
 		}
@@ -196,9 +194,9 @@ func colorSubstring(line string, find string, color string) string {
 func colorString(line string, find string, color string) string {
 	r := regexp.MustCompile(find)
 	line = r.ReplaceAllStringFunc(line, func(match string) string {
-		// fmt.Printf("Match: %s\n", match)
-		if strings.Contains(find, "(") {
-			fmt.Printf("%s, %s, %s\n", match, find, color)
+		fmt.Printf("Match: %s  |   Find: %s\n", match, find)
+		if matched, _ := regexp.MatchString("[^\\\\]\\(", find); matched == true {
+			fmt.Printf("colorString(): %s, %s, %s\n", match, find, color)
 			match = colorSubstring(match, find, color)
 		}
 		return r.ReplaceAllString(match, ansi.Color(match, color))
@@ -221,5 +219,5 @@ func init() {
 	flag.Var(&confFiles, "conf", "Some description for this param.")
 	flag.Parse()
 }
-
 // TEST outer inner outer TEST
+// TEST outer in(n)er outer TEST
