@@ -21,8 +21,8 @@ definition:
         color: "green"
       - match: "i[n\\(\\)]+er"
         color: "yellow"
-      - match: "i(nn)er"
+      - match: "i(.{2})er"
         color: "magenta"
         disable: false
-      - match: "in(\\(n\\))er"
+      - match: "in(\\(.\\))er"
         color: "red+h"

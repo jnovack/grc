@@ -151,12 +151,12 @@ func main() {
 		c := regexp.MustCompile(colorRegExp)
 		substrings := c.FindAllStringSubmatch(newline, -1)
 		for len(substrings) > 0 {
-			// fmt.Printf("----   %q\n", newline)
+			// fmt.Printf("\r----   %q\n", newline)
 			newline = c.ReplaceAllString(newline, colorReplace)
 			// for _, s := range substrings {
-			// 	fmt.Printf("substring: %q\n", s)
+			// 	fmt.Printf("\rsubstring: %q\n", s)
 			// }
-			// fmt.Printf("++++   %q\n", newline)
+			// fmt.Printf("\r++++   %q\n", newline)
 			substrings := c.FindAllStringSubmatch(newline, -1)
 			if len(substrings) == 0 {
 				break
@@ -165,7 +165,7 @@ func main() {
 		// fmt.Printf("****   %q\n", newline)
 		removeDupes := regexp.MustCompile("\\x1c\\]")
 		newline = removeDupes.ReplaceAllString(newline, "\x1b[")
-		fmt.Println(newline)
+		fmt.Printf("\r%s\n", newline)
 	})
 }
 
