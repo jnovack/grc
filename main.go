@@ -8,7 +8,7 @@ import (
 	"io"
 	"os"
 	"regexp"
-
+	"strings"
 	"github.com/mgutz/ansi"
 	"github.com/spf13/viper"
 )
@@ -132,7 +132,13 @@ func main() {
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
 					//fmt.Println(match)
 					if f.Color != "" {
-						match = r.ReplaceAllString(match, ansi.Color(match, f.Color))
+						// if mode == "substring" && match contains parens
+						//    FindAllStringSubmatch
+						//    loop
+						//        replace \x with color[x]
+						match = colorString(match, f.Match, f.Color)
+
+						// match = r.ReplaceAllString(match, ansi.Color(match, f.Color))
 					}
 					if f.Replace != "" {
 						match = r.ReplaceAllString(match, f.Replace)
@@ -165,6 +171,39 @@ func main() {
 		newline = removeDupes.ReplaceAllString(newline, "\x1b[")
 		fmt.Println(newline)
 	})
+}
+
+func colorSubstring(line string, find string, color string) string {
+	// matched, _ := regexp.MatchString("[^\\](.*[^\\])", find)
+	// fmt.Println(matched)
+	// for matched {
+		replace := "(.*?)\\(([^(]+?)\\)(.*)"
+		r := regexp.MustCompile(replace)
+		substrings := r.FindAllStringSubmatch(find, -1)
+		fmt.Printf("%q\n", substrings)
+		var b strings.Builder
+		substrings[0][2] = ansi.Color(substrings[0][2], color)
+		for i := 1; i <= 3; i++ {
+			fmt.Fprintf(&b, "%s", substrings[0][i])
+		}
+		line = b.String()
+		// matched, _ = regexp.MatchString("[^\\](.*[^\\])", line)
+		// fmt.Println(matched)
+	// }
+	return line
+}
+
+func colorString(line string, find string, color string) string {
+	r := regexp.MustCompile(find)
+	line = r.ReplaceAllStringFunc(line, func(match string) string {
+		// fmt.Printf("Match: %s\n", match)
+		if strings.Contains(find, "(") {
+			fmt.Printf("%s, %s, %s\n", match, find, color)
+			match = colorSubstring(match, find, color)
+		}
+		return r.ReplaceAllString(match, ansi.Color(match, color))
+	})
+	return line
 }
 
 // Init

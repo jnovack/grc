@@ -17,5 +17,5 @@ definition:
         color: "green+h"
       - match: "inner"
         color: "red+h"
-      - match: "n(n)e"
+      - match: "i(n)(n)er"
         color: "white+h"
