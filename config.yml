@@ -1,6 +1,8 @@
 definition:
   - name: ping
     filter:
+      - match: "PING (.*?) "
+        color: "magenta+h"
       - match: "\\d+\\.\\d+\\.\\d+\\.\\d+"
         color: "magenta"
       - match: "=(\\d\\.\\d\\d\\d) ms"
@@ -10,7 +12,7 @@ definition:
       - match: "=(\\d\\d\\d\\.\\d\\d\\d) ms"
         color: "red"
       - match: "Request timeout .+"
-        color: "red+bh:red"
+        color: "red+h:red"
   - name: test
     filter:
       - match: "// TEST.+"
