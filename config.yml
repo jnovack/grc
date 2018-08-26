@@ -9,6 +9,8 @@ definition:
         color: "yellow"
       - match: "=(\\d\\d\\d\\.\\d\\d\\d) ms"
         color: "red"
+      - match: "Request timeout .+"
+        color: "red+bh:red"
   - name: test
     filter:
       - match: "// TEST.+"
