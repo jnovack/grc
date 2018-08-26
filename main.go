@@ -145,9 +145,9 @@ func main() {
 		}
 
 		// Clean up nested colors
-		colorRegExp := "\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b\\[]+)\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b\\[]+)\\x1b\\[(0m)([^\\x1b\\[]+)\\x1b\\[(0m)"
-		colorReplace := "\x1b[$1$2\x1c]$3$4\x1c]$1$6\x1b[$7"
-		// fmt.Println("----", colorRegExp, "----\n")
+		colorRegExp := "\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(0m)([^\\x1b].+)\\x1b\\[(0m)"
+		colorReplace := "\x1b[$1$2\x1c[$3$4\x1c[$1$6\x1b[$7"
+		// fmt.Println(">>>>", colorRegExp, "<<<<\n")
 		c := regexp.MustCompile(colorRegExp)
 		substrings := c.FindAllStringSubmatch(newline, -1)
 		for len(substrings) > 0 {
@@ -163,8 +163,8 @@ func main() {
 			}
 		}
 		// fmt.Printf("****   %q\n", newline)
-		removeDupes := regexp.MustCompile("\\x1c\\]")
-		newline = removeDupes.ReplaceAllString(newline, "\x1b[")
+		decode := regexp.MustCompile("\\x1c")
+		newline = decode.ReplaceAllString(newline, "\x1b")
 		fmt.Printf("\r%s\n", newline)
 	})
 }
