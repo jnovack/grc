@@ -153,9 +153,9 @@ func main() {
 		for len(substrings) > 0 {
 			// fmt.Printf("----   %q\n", newline)
 			newline = c.ReplaceAllString(newline, colorReplace)
-			for _, s := range substrings {
-				fmt.Printf("substring: %q\n", s)
-			}
+			// for _, s := range substrings {
+			// 	fmt.Printf("substring: %q\n", s)
+			// }
 			// fmt.Printf("++++   %q\n", newline)
 			substrings := c.FindAllStringSubmatch(newline, -1)
 			if len(substrings) == 0 {
@@ -194,9 +194,8 @@ func colorSubstring(line string, find string, color string) string {
 func colorString(line string, find string, color string) string {
 	r := regexp.MustCompile(find)
 	line = r.ReplaceAllStringFunc(line, func(match string) string {
-		fmt.Printf("Match: %s  |   Find: %s\n", match, find)
+		// fmt.Printf("colorString():  %s  |  %s  |  %s\n", match, find, color)
 		if matched, _ := regexp.MatchString("[^\\\\]\\(", find); matched == true {
-			fmt.Printf("colorString(): %s, %s, %s\n", match, find, color)
 			match = colorSubstring(match, find, color)
 		}
 		return r.ReplaceAllString(match, ansi.Color(match, color))
