@@ -1,14 +1,14 @@
 definition:
   - name: ping
     filter:
-      - match: "viper"
-        color: "yellow"
-      - match: "C(\\w+)g"
-        replace: "--C--${1}--G--"
+      - match: "\\d+\\.\\d+\\.\\d+\\.\\d+"
         color: "magenta"
-      - match: "func"
-        replace: "function"
-        color: "cyan"
+      - match: "=(\\d\\.\\d\\d\\d) ms"
+        color: "green"
+      - match: "=(\\d\\d\\.\\d\\d\\d) ms"
+        color: "yellow"
+      - match: "=(\\d\\d\\d\\.\\d\\d\\d) ms"
+        color: "red"
   - name: test
     filter:
       - match: "// TEST.+"
