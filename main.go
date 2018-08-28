@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
 	"github.com/mgutz/ansi"
 	"github.com/spf13/viper"
 )
@@ -129,7 +130,8 @@ func main() {
 		newline := line
 		for _, n := range defs.Definition {
 			for _, f := range n.Filter {
-				r := regexp.MustCompile(f.Match)
+				r := regexp.MustCompile(f.Match) // regular working match
+				// r := regexp.MustCompile("[^\\x1b\\[\\d;m]{5,10}" + f.Match + "[^\\x1b\\[0m]{4}") // attempted negated match
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
 					if !f.Disable {
 						if f.Color != "" {
@@ -149,7 +151,7 @@ func main() {
 		}
 
 		// Clean up nested colors
-		colorRegExp := "\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(0m)([^\\x1b].+)\\x1b\\[(0m)"
+		colorRegExp := "\\x1b\\[(\\d?;?\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(\\d?;?\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(0m)([^\\x1b].+)\\x1b\\[(0m)"
 		colorReplace := "\x1b[$1$2\x1c[$3$4\x1c[$1$6\x1b[$7"
 		// fmt.Println(">>>>", colorRegExp, "<<<<\n")
 		c := regexp.MustCompile(colorRegExp)
@@ -212,6 +214,7 @@ func init() {
 	flag.Var(&confFiles, "conf", "Some description for this param.")
 	flag.Parse()
 }
+
 // TEST outer zinnerz outer TEST
 // TEST outer zin(n)erz outer TEST
 // PING 8.8.8.8 (8.8.8.8): 56 data bytes
@@ -219,7 +222,7 @@ func init() {
 // 64 bytes from 8.8.8.8: icmp_seq=1 ttl=122 time=19.494 ms
 // 64 bytes from 8.8.8.8: icmp_seq=2 ttl=122 time=219.500 ms
 // Request timeout for icmp_seq 3
-// 
+//
 // --- 8.8.8.8 ping statistics ---
 // 4 packets transmitted, 3 packets received, 25.0% packet loss
 // round-trip min/avg/max/stddev = 8.105/19.494/219.500/20.274 ms
