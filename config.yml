@@ -1,15 +1,15 @@
 definition:
   - name: ping
     filter:
-      - match: "PING (.*?) "
+      - match: "PING (.+?) "
         color: "magenta+h"
       - match: "\\d+\\.\\d+\\.\\d+\\.\\d+"
         color: "magenta"
-      - match: "=(\\d\\.\\d\\d\\d) ms"
+      - match: "\\D(\\d\\.\\d\\d\\d) ?m?s?"
         color: "green"
-      - match: "=(\\d\\d\\.\\d\\d\\d) ms"
+      - match: "\\D(\\d\\d\\.\\d\\d\\d) ?m?s?"
         color: "yellow"
-      - match: "=(\\d\\d\\d\\.\\d\\d\\d) ms"
+      - match: "\\D(\\d\\d\\d\\.\\d\\d\\d) ?m?s?"
         color: "red"
       - match: "Request timeout .+"
         color: "red+h:red"
