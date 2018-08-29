@@ -222,6 +222,7 @@ func init() {
 
 // TEST outer zinnerz outer TEST
 // TEST outer zin(n)erz outer TEST
+// PING dns.public.google.com (8.8.8.8): 56 data bytes
 // PING 8.8.8.8 (8.8.8.8): 56 data bytes
 // 64 bytes from 8.8.8.8: icmp_seq=0 ttl=122 time=8.105 ms
 // 64 bytes from 8.8.8.8: icmp_seq=1 ttl=122 time=19.494 ms
