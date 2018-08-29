@@ -16,20 +16,20 @@ import (
 
 // Structs
 
-type replacement struct {
+type Replacement struct {
 	Match   string
 	Replace string
 	Color   string
 	Disable bool
 }
 
-type definition struct {
+type Definition struct {
 	Name   string
-	Filter []replacement
+	Filter []Replacement
 }
 
-type configuration struct {
-	Definition []definition
+type Configuration struct {
+	Definition []Definition
 }
 
 // Array Flags
@@ -86,9 +86,64 @@ func stringInSlice(a string, list []string) bool {
 	return false
 }
 
+func cleanUpColors(line string) string {
+	// Clean up nested colors
+	colorRegExp := "\\x1b\\[(\\d?;?\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(\\d?;?\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(0m)([^\\x1b].+)\\x1b\\[(0m)"
+	colorReplace := "\x1b[$1$2\x1c[$3$4\x1c[$1$6\x1b[$7"
+	// fmt.Println(">>>>", colorRegExp, "<<<<\n")
+	c := regexp.MustCompile(colorRegExp)
+	substrings := c.FindAllStringSubmatch(line, -1)
+	for len(substrings) > 0 {
+		// fmt.Printf("\r----   %q\n", line)
+		line = c.ReplaceAllString(line, colorReplace)
+		// for _, s := range substrings {
+		// 	fmt.Printf("\rsubstring: %q\n", s)
+		// }
+		// fmt.Printf("\r++++   %q\n", line)
+		substrings := c.FindAllStringSubmatch(line, -1)
+		if len(substrings) == 0 {
+			break
+		}
+	}
+	fmt.Printf("****   %q\n", line)
+	decode := regexp.MustCompile("\\x1c")
+	line = decode.ReplaceAllString(line, "\x1b")
+	return line
+}
+
+func processLine(line string, defs Configuration) string {
+	for _, n := range defs.Definition {
+		for _, f := range n.Filter {
+			r := regexp.MustCompile(f.Match) // regular working match
+			// TODO this does not find parens without escaping successfully
+			// if matched, _ := regexp.MatchString("[^\\]?\\(.*[^\\]?\\)", f.Match); matched == true {
+			// 	fmt.Printf("parenthesis in filter: %q\n", f.Match)                       // Parenthesis in filter
+			// 	r = regexp.MustCompile("[^\\x1b\\[\\d;m]?" + f.Match + "[^\\x1b\\[0m]?") // attempted negated match
+			// }
+			line = r.ReplaceAllStringFunc(line, func(match string) string {
+				if !f.Disable {
+					if f.Color != "" {
+						// TODO this does not find parens without escaping successfully
+						if matched, _ := regexp.MatchString("[^\\\\]\\(.*[^\\\\]\\)", f.Match); matched == true {
+							match = colorSubstring(match, f.Match, f.Color)
+						} else {
+							match = colorString(match, f.Match, f.Color)
+						}
+					}
+					if f.Replace != "" {
+						match = r.ReplaceAllString(match, f.Replace)
+					}
+				}
+				return match
+			})
+		}
+	}
+	return cleanUpColors(line)
+}
+
 // Main
 func main() {
-	var config, defs configuration
+	var config, defs Configuration
 	err := viper.Unmarshal(&config)
 	if err != nil {
 		panic("Unable to unmarshal config")
@@ -127,55 +182,7 @@ func main() {
 
 	// iterate through defs
 	ReadLine(os.Stdin, func(line string) {
-		newline := line
-		for _, n := range defs.Definition {
-			for _, f := range n.Filter {
-				r := regexp.MustCompile(f.Match) // regular working match
-				// TODO this does not find parens without escaping successfully
-				// if matched, _ := regexp.MatchString("[^\\]?\\(.*[^\\]?\\)", f.Match); matched == true {
-				// 	fmt.Printf("parenthesis in filter: %q\n", f.Match)                       // Parenthesis in filter
-				// 	r = regexp.MustCompile("[^\\x1b\\[\\d;m]?" + f.Match + "[^\\x1b\\[0m]?") // attempted negated match
-				// }
-				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
-					if !f.Disable {
-						if f.Color != "" {
-							// TODO this does not find parens without escaping successfully
-							if matched, _ := regexp.MatchString("[^\\\\]\\(.*[^\\\\]\\)", f.Match); matched == true {
-								match = colorSubstring(match, f.Match, f.Color)
-							} else {
-								match = colorString(match, f.Match, f.Color)
-							}
-						}
-						if f.Replace != "" {
-							match = r.ReplaceAllString(match, f.Replace)
-						}
-					}
-					return match
-				})
-			}
-		}
-
-		// Clean up nested colors
-		colorRegExp := "\\x1b\\[(\\d?;?\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(\\d?;?\\d?;?\\d\\dm)([^\\x1b]+)\\x1b\\[(0m)([^\\x1b].+)\\x1b\\[(0m)"
-		colorReplace := "\x1b[$1$2\x1c[$3$4\x1c[$1$6\x1b[$7"
-		// fmt.Println(">>>>", colorRegExp, "<<<<\n")
-		c := regexp.MustCompile(colorRegExp)
-		substrings := c.FindAllStringSubmatch(newline, -1)
-		for len(substrings) > 0 {
-			// fmt.Printf("\r----   %q\n", newline)
-			newline = c.ReplaceAllString(newline, colorReplace)
-			// for _, s := range substrings {
-			// 	fmt.Printf("\rsubstring: %q\n", s)
-			// }
-			// fmt.Printf("\r++++   %q\n", newline)
-			substrings := c.FindAllStringSubmatch(newline, -1)
-			if len(substrings) == 0 {
-				break
-			}
-		}
-		// fmt.Printf("****   %q\n", newline)
-		decode := regexp.MustCompile("\\x1c")
-		newline = decode.ReplaceAllString(newline, "\x1b")
+		newline := processLine(line, defs)
 		fmt.Printf("\r%s\n", newline)
 	})
 }
