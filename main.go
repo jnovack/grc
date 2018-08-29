@@ -131,11 +131,16 @@ func main() {
 		for _, n := range defs.Definition {
 			for _, f := range n.Filter {
 				r := regexp.MustCompile(f.Match) // regular working match
-				// r := regexp.MustCompile("[^\\x1b\\[\\d;m]{5,10}" + f.Match + "[^\\x1b\\[0m]{4}") // attempted negated match
+				// TODO this does not find parens without escaping successfully
+				// if matched, _ := regexp.MatchString("[^\\]?\\(.*[^\\]?\\)", f.Match); matched == true {
+				// 	fmt.Printf("parenthesis in filter: %q\n", f.Match)                       // Parenthesis in filter
+				// 	r = regexp.MustCompile("[^\\x1b\\[\\d;m]?" + f.Match + "[^\\x1b\\[0m]?") // attempted negated match
+				// }
 				newline = r.ReplaceAllStringFunc(newline, func(match string) string {
 					if !f.Disable {
 						if f.Color != "" {
-							if matched, _ := regexp.MatchString("[^\\\\]\\(", f.Match); matched == true {
+							// TODO this does not find parens without escaping successfully
+							if matched, _ := regexp.MatchString("[^\\\\]\\(.*[^\\\\]\\)", f.Match); matched == true {
 								match = colorSubstring(match, f.Match, f.Color)
 							} else {
 								match = colorString(match, f.Match, f.Color)
@@ -184,7 +189,7 @@ func colorSubstring(line string, find string, color string) string {
 	// for _, s := range replace[0] {
 	// 	fmt.Printf("replace-substring: %q\n", s)
 	// }
-	line = strings.Replace(replace[0][2], replace[0][3], ansi.Color(replace[0][3], color), -1)
+	line = strings.Replace(replace[0][0], replace[0][3], ansi.Color(replace[0][3], color), -1)
 	// fmt.Printf("\rcolorSubstring: return %s\n", line)
 	return line
 }
