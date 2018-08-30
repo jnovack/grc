@@ -24,7 +24,7 @@ definition:
       - match: "^([\\<\\-][^\\<].*|$)"
         color: "red+h"
       - match: "^@@ .*? @@$"
-        color: "magenta"
+        color: "cyan+h"
   - name: test
     filter:
       - match: "// TEST.+"
