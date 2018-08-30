@@ -110,7 +110,7 @@ func cleanUpColors(line string) string {
 			break
 		}
 	}
-	fmt.Printf("****   %q\n", line)
+	// fmt.Printf("****   %q\n", line)
 	decode := regexp.MustCompile("\\x1c")
 	line = decode.ReplaceAllString(line, "\x1b")
 	return line
