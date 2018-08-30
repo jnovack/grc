@@ -6,8 +6,8 @@ A Go port of [grc](https://github.com/garabik/grc) (Generic Colouriser).
 
 Turn this...
 
-[](docs/before.png?raw=true)
+![](docs/before.png?raw=true)
 
 into this!!!
 
-[](docs/after.png?raw=true)
+![](docs/after.png?raw=true)
