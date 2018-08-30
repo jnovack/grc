@@ -13,6 +13,18 @@ definition:
         color: "red"
       - match: "Request timeout .+"
         color: "red+h:red"
+  - name: diff
+    filter:
+      - match: "^(\\+.*?$)"
+        color: "green+h"
+      - match: "^(\\>[^\\>].*|$)"
+        color: "green+h"
+      - match: "^(\\-\\-\\-.+?$|$)"
+        color: "red+h"
+      - match: "^([\\<\\-][^\\<].*|$)"
+        color: "red+h"
+      - match: "^@@ .*? @@$"
+        color: "magenta"
   - name: test
     filter:
       - match: "// TEST.+"
