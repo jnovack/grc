@@ -6,34 +6,34 @@ import (
 )
 
 func TestColor1(t *testing.T) {
-	var filter []Replacement
+	var filters []Filter
 	// Color Reset to Previous Testing
-	filter = append(filter, Replacement{
+	filters = append(filters, Filter{
 		Match: "// TEST.+",
 		Color: "black+h",
 	})
-	filter = append(filter, Replacement{
+	filters = append(filters, Filter{
 		Match: "outer.*outer",
 		Color: "green",
 	})
-	filter = append(filter, Replacement{
+	filters = append(filters, Filter{
 		Match: "i[n\\(\\)]+er",
 		Color: "yellow",
 	})
-	filter = append(filter, Replacement{
+	filters = append(filters, Filter{
 		Match: "i(.{2})er",
 		Color: "magenta",
 	})
-	filter = append(filter, Replacement{
+	filters = append(filters, Filter{
 		Match: "in(\\(.\\))er",
 		Color: "red+h",
 	})
 	// Overlapping RegExps Testing
-	filter = append(filter, Replacement{
+	filters = append(filters, Filter{
 		Match: "PING (.+?) ",
 		Color: "magenta+h",
 	})
-	filter = append(filter, Replacement{
+	filters = append(filters, Filter{
 		Match: "\\d+\\.\\d+\\.\\d+\\.\\d+",
 		Color: "magenta",
 	})
@@ -42,7 +42,7 @@ func TestColor1(t *testing.T) {
 	defs := Configuration{}
 	defs.Definition = append(defs.Definition, Definition{
 		Name:   "testing",
-		Filter: filter,
+		Filter: filters,
 	})
 
 	// Tests

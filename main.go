@@ -14,29 +14,34 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Structs
+/* Structs */
 
-type Replacement struct {
+// Filter structure for definitions
+type Filter struct {
 	Match   string
 	Replace string
 	Color   string
 	Disable bool
 }
 
+// Definition for each individual application or set of filters
 type Definition struct {
 	Name   string
-	Filter []Replacement
+	Filter []Filter
 }
 
+// Configuration construct
 type Configuration struct {
 	Definition []Definition
 }
 
-// Array Flags
+/* Array Flags */
+
 //  - https://stackoverflow.com/questions/28322997/how-to-get-a-list-of-values-into-a-flag-in-golang
 type arrayFlags []string
 
 func (i *arrayFlags) String() string {
+	// TODO confFiles.String() should print something helpful...
 	return "my string representation"
 }
 
@@ -55,7 +60,7 @@ func (i *arrayFlags) Set(value string) error {
 
 var confFiles arrayFlags
 
-// Functions
+/* Functions */
 
 // ReadLine reads a line safely into the buffer
 func ReadLine(reader io.Reader, f func(string)) {
@@ -227,15 +232,17 @@ func init() {
 	flag.Parse()
 }
 
+/*
 // TEST outer zinnerz outer TEST
 // TEST outer zin(n)erz outer TEST
-// PING dns.public.google.com (8.8.8.8): 56 data bytes
-// PING 8.8.8.8 (8.8.8.8): 56 data bytes
-// 64 bytes from 8.8.8.8: icmp_seq=0 ttl=122 time=8.105 ms
-// 64 bytes from 8.8.8.8: icmp_seq=1 ttl=122 time=19.494 ms
-// 64 bytes from 8.8.8.8: icmp_seq=2 ttl=122 time=219.500 ms
-// Request timeout for icmp_seq 3
-//
-// --- 8.8.8.8 ping statistics ---
-// 4 packets transmitted, 3 packets received, 25.0% packet loss
-// round-trip min/avg/max/stddev = 8.105/19.494/219.500/20.274 ms
+PING dns.public.google.com (8.8.8.8): 56 data bytes
+PING 8.8.8.8 (8.8.8.8): 56 data bytes
+64 bytes from 8.8.8.8: icmp_seq=0 ttl=122 time=8.105 ms
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=122 time=19.494 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=122 time=219.500 ms
+Request timeout for icmp_seq 3
+
+--- 8.8.8.8 ping statistics ---
+4 packets transmitted, 3 packets received, 25.0% packet loss
+round-trip min/avg/max/stddev = 8.105/19.494/219.500/20.274 ms
+*/

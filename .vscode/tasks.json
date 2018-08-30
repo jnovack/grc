@@ -4,9 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "cat",
+            "label": "go test",
             "type": "shell",
-            "command": "tail -12 main.go | go run main.go",
+            "command": "go test -timeout 30s",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "example",
+            "type": "shell",
+            "command": "tail -14 main.go | go run main.go",
             "group": {
                 "kind": "build",
                 "isDefault": true
