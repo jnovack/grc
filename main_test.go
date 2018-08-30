@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Tests(t *testing.T) {
+func TestColor(t *testing.T) {
 	var filters []Filter
 	// Color Reset to Previous Testing
 	filters = append(filters, Filter{
